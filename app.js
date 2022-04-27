@@ -7,6 +7,10 @@ const logger = require('morgan');
 const sassMiddleware = require('node-sass-middleware');
 const serveFavicon = require('serve-favicon');
 const baseRouter = require('./routes/base');
+const expressSession = require('express-session');
+const MongoStore = require('connect-mongo');
+const User = require('./models/user');
+const deserializeUser = require('./middleware/deserialize-user');
 
 const app = express();
 
@@ -28,6 +32,23 @@ app.use(
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(logger('dev'));
 app.use(express.urlencoded({ extended: true }));
+
+app.use(
+  expressSession({
+    secret: 'gasjhfdbwj',
+    saveUninitialized: false,
+    resave: false,
+    cookie: {
+      maxAge: 15 * (24 * 60 * 60 * 1000)
+    },
+    store: MongoStore.create({
+      mongoUrl: process.env.MONGODB_URI,
+      ttl: 60 * 60
+    })
+  })
+);
+
+app.use(deserializeUser);
 
 app.use('/', baseRouter);
 
