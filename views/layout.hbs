@@ -7,11 +7,23 @@
 
   <nav>
     <a href='/'>Home</a>
-    <a href='/login'>Log in</a>
-    <a href='/signup'>Sign up</a>
-    <a href='/private'>Private</a>
-    <a href='/main'>Main</a>
-    <a href='/'>Logout</a>
+
+    {{#if user}}
+
+      <a href='/private'>Private</a>
+      <a href='/main'>Main</a>
+
+      <form action='/logout' method='POST'>
+        <button href='/'>Logout</button>
+      </form>
+
+    {{else}}
+
+      <a href='/login'>Log in</a>
+      <a href='/signup'>Sign up</a>
+
+    {{/if}}
+
   </nav>
 
   <body>

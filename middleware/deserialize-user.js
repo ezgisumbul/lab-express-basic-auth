@@ -6,6 +6,7 @@ const deserializeUser = (req, res, next) => {
     User.findById(userId)
       .then((user) => {
         req.user = user;
+        res.locals.user = user;
         next();
       })
       .catch((err) => {

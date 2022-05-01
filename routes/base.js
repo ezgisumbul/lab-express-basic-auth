@@ -2,6 +2,7 @@ const express = require('express');
 const User = require('../models/user');
 const baseRouter = new express.Router();
 const bcryptjs = require('bcryptjs');
+const routeGuard = require('./../middleware/route-guard');
 
 baseRouter.get('/', (req, res, next) => {
   res.render('index');
@@ -64,20 +65,16 @@ baseRouter.post('/login', (req, res, next) => {
     });
 });
 
-baseRouter.get('/main', (req, res, next) => {
-  if (req.session.userId) {
-    res.render('main');
-  } else {
-    next(new Error('User is not authenticated'));
-  }
+baseRouter.get('/main', routeGuard, (req, res, next) => {});
+
+baseRouter.get('/private', routeGuard, (req, res, next) => {
+  // res.render('private', { user: req.user });
+  res.render('private');
 });
 
-baseRouter.get('/private', (req, res, next) => {
-  if (req.session.userId) {
-    res.render('private', { user: req.user });
-  } else {
-    next(new Error('User is not authenticated'));
-  }
+baseRouter.post('/logout', (req, res) => {
+  req.session.destroy();
+  res.redirect('/');
 });
 
 module.exports = baseRouter;
